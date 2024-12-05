@@ -21,7 +21,20 @@ export const AddTodo = ({ onAdd }: AddTodoProps) => {
         document.activeElement?.tagName !== "INPUT" &&
         document.activeElement?.tagName !== "TEXTAREA"
       ) {
+        e.preventDefault();
         setIsAdding(true);
+      }
+
+      if (
+        e.key.toLowerCase() === "escape" &&
+        isAdding &&
+        !e.ctrlKey &&
+        !e.altKey &&
+        document.activeElement?.tagName !== "INPUT" &&
+        document.activeElement?.tagName !== "TEXTAREA"
+      ) {
+        e.preventDefault();
+        setIsAdding(false);
       }
     };
 

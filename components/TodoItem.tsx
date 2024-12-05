@@ -149,7 +149,7 @@ export const TodoItem = ({
                 e.stopPropagation();
                 onDelete(todo.id);
               }}
-              className="p-2 text-gray-500 hover:text-red-500 rounded-full hover:bg-red-50 transition-colors flex items-center justify-center"
+              className="p-2 text-red-500 hover:text-red-500 rounded-full hover:bg-red-100 transition-colors flex items-center justify-center"
             >
               <Trash2 size={16} className="flex-shrink-0" />
             </motion.button>

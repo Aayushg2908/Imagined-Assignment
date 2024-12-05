@@ -87,7 +87,7 @@ export default function Home() {
             </div>
 
             <motion.div
-              className="absolute left-full top-0 ml-2 p-2 bg-white rounded-lg shadow-lg"
+              className="absolute left-full -top-4 ml-2 p-2 bg-white rounded-lg shadow-lg"
               initial={{ opacity: 0, y: -13 }}
               variants={{
                 hover: { opacity: 1, y: -10 },
@@ -97,6 +97,7 @@ export default function Home() {
               <div className="text-sm text-gray-600 whitespace-nowrap">
                 <p className="mb-1">1. You can Swipe to delete a todo</p>
                 <p className="mb-1">2. Press A to open the Add Todo Modal</p>
+                <p className="mb-1">3. Press ESC to open the Close the Modal</p>
               </div>
             </motion.div>
           </motion.div>
