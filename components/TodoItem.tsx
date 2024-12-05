@@ -41,7 +41,7 @@ export const TodoItem = ({
           whileTap={{ scale: 0.9 }}
           whileHover={{ scale: 1.1 }}
           onClick={() => onToggle(todo.id)}
-          className="mt-1 relative w-5 h-5 border-2 rounded-full border-gray-300 hover:border-black transition-colors group"
+          className="relative w-5 h-5 border-2 rounded-full border-gray-300 hover:border-black transition-colors group mt-0.5"
         >
           {todo.completed && (
             <motion.div
@@ -61,42 +61,47 @@ export const TodoItem = ({
           animate={{ opacity: todo.completed ? 0.6 : 1 }}
           transition={{ duration: 0.2 }}
         >
-          <h3
-            className={`font-medium ${
-              todo.completed ? "line-through text-gray-400" : ""
-            }`}
-          >
-            {todo.title}
-          </h3>
-          {todo.description && (
-            <p
-              className={`mt-1 text-sm ${
-                todo.completed ? "line-through text-gray-400" : "text-gray-500"
-              }`}
-            >
-              {todo.description}
-            </p>
-          )}
+          <div className="flex items-center justify-between">
+            <div className="min-w-0 flex-1">
+              <h3
+                className={`font-medium truncate ${
+                  todo.completed ? "line-through text-gray-400" : ""
+                }`}
+              >
+                {todo.title}
+              </h3>
+              {todo.description && (
+                <p
+                  className={`mt-1 text-sm ${
+                    todo.completed
+                      ? "line-through text-gray-400"
+                      : "text-gray-500"
+                  }`}
+                >
+                  {todo.description}
+                </p>
+              )}
+            </div>
+            <div className="flex gap-2 ml-4 flex-shrink-0">
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsEditModalOpen(true)}
+                className="p-2 text-gray-500 hover:text-black rounded-full hover:bg-gray-100 transition-colors"
+              >
+                <Pencil size={16} />
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => onDelete(todo.id)}
+                className="p-2 text-gray-500 hover:text-red-500 rounded-full hover:bg-red-50 transition-colors"
+              >
+                <Trash2 size={16} />
+              </motion.button>
+            </div>
+          </div>
         </motion.div>
-
-        <div className="flex gap-2 mt-2">
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setIsEditModalOpen(true)}
-            className="p-2 text-gray-500 hover:text-black rounded-full hover:bg-gray-100 transition-colors"
-          >
-            <Pencil size={16} />
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => onDelete(todo.id)}
-            className="p-2 text-gray-500 hover:text-red-500 rounded-full hover:bg-red-50 transition-colors"
-          >
-            <Trash2 size={16} />
-          </motion.button>
-        </div>
       </motion.div>
 
       <EditTodoModal
