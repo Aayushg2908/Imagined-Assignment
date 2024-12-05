@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useTransform } from "framer-motion";
+import { motion, PanInfo, useMotionValue, useTransform } from "framer-motion";
 import { Pencil, Trash2, Check } from "lucide-react";
 import { Todo } from "@/store/todoStore";
 import { useState } from "react";
@@ -34,7 +34,10 @@ export const TodoItem = ({
     ]
   );
 
-  const handleDragEnd = (event: any, info: any) => {
+  const handleDragEnd = (
+    event: MouseEvent | TouchEvent | PointerEvent,
+    info: PanInfo
+  ) => {
     if (Math.abs(info.offset.x) > 100) {
       onDelete(todo.id);
     }
