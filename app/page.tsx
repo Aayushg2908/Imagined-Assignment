@@ -5,7 +5,7 @@ import { TodoItem } from "@/components/TodoItem";
 import { Calendar } from "@/components/Calendar";
 import { useTodoStore } from "@/store/todoStore";
 import { format } from "date-fns";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Home() {
@@ -19,8 +19,24 @@ export default function Home() {
     updateTodo,
   } = useTodoStore();
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const popoverRef = useRef<HTMLDivElement>(null);
   const formattedDate = format(selectedDate, "yyyy-MM-dd");
   const todaysTodos = todos.filter((todo) => todo.date === formattedDate);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        popoverRef.current &&
+        !popoverRef.current.contains(event.target as Node)
+      ) {
+        setIsPopoverOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleAddTodo = (text: string, description: string) => {
     addTodo(text, formattedDate, description);
@@ -77,8 +93,15 @@ export default function Home() {
         </motion.div>
 
         <div className="relative m-4 flex justify-center items-center">
-          <motion.div className="relative cursor-pointer" whileHover="hover">
-            <div className="p-[2px] rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
+          <motion.div
+            className="relative cursor-pointer"
+            whileHover="hover"
+            ref={popoverRef}
+          >
+            <div
+              className="p-[2px] rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500"
+              onClick={() => setIsPopoverOpen(!isPopoverOpen)}
+            >
               <div className="px-4 py-1 bg-white rounded-full">
                 <span className="text-sm font-medium bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
                   Extra features
@@ -92,6 +115,7 @@ export default function Home() {
               variants={{
                 hover: { opacity: 1, y: -10 },
               }}
+              animate={isPopoverOpen ? { opacity: 1, y: -10 } : undefined}
               transition={{ duration: 0.2 }}
             >
               <div className="text-sm text-gray-600 whitespace-nowrap">
