@@ -31,15 +31,26 @@ export default function Home() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
         className="max-w-4xl mx-auto p-6"
       >
-        <div className="max-w-2xl mx-auto">
-          <Calendar
-            selectedDate={selectedDate}
-            onDateSelect={setSelectedDate}
-          />
+        <motion.div
+          className="max-w-2xl mx-auto"
+          whileHover={{ scale: 1.01 }}
+          transition={{ duration: 0.2 }}
+        >
+          <motion.div whileTap={{ scale: 0.98 }} transition={{ duration: 0.1 }}>
+            <Calendar
+              selectedDate={selectedDate}
+              onDateSelect={setSelectedDate}
+            />
+          </motion.div>
 
-          <motion.div layout className="mb-8 text-center">
+          <motion.div
+            layout
+            className="mb-8 text-center"
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
             <AnimatePresence mode="wait">
               <motion.div
                 key={format(selectedDate, "MMMM-d")}
@@ -67,7 +78,7 @@ export default function Home() {
               </motion.h1>
             </AnimatePresence>
           </motion.div>
-        </div>
+        </motion.div>
 
         <motion.div layout className="px-4 max-w-2xl mx-auto">
           <AnimatePresence mode="wait">
