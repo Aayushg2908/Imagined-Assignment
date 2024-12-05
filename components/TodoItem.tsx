@@ -23,14 +23,29 @@ export const TodoItem = ({
 }: TodoItemProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const x = useMotionValue(0);
-  const opacity = useTransform(x, [-100, 0, 100], [0.3, 1, 0.3]);
+  const dragThreshold = 200;
+  const deleteThreshold = dragThreshold * 1.2;
+
+  const opacity = useTransform(
+    x,
+    [-dragThreshold, 0, dragThreshold],
+    [0.3, 1, 0.3]
+  );
   const background = useTransform(
     x,
-    [-100, 0, 100],
     [
-      "rgba(239, 68, 68, 0.1)",
+      -dragThreshold,
+      -dragThreshold * 0.8,
+      0,
+      dragThreshold * 0.8,
+      dragThreshold,
+    ],
+    [
+      "rgba(239, 68, 68, 1)",
       "rgba(255, 255, 255, 1)",
-      "rgba(239, 68, 68, 0.1)",
+      "rgba(255, 255, 255, 1)",
+      "rgba(255, 255, 255, 1)",
+      "rgba(239, 68, 68, 1)",
     ]
   );
 
@@ -38,7 +53,7 @@ export const TodoItem = ({
     event: MouseEvent | TouchEvent | PointerEvent,
     info: PanInfo
   ) => {
-    if (Math.abs(info.offset.x) > 100) {
+    if (Math.abs(info.offset.x) > deleteThreshold) {
       onDelete(todo.id);
     }
   };
@@ -50,7 +65,7 @@ export const TodoItem = ({
         style={{ x, background }}
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={0.7}
+        dragElastic={0.5}
         onDragEnd={handleDragEnd}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -62,16 +77,10 @@ export const TodoItem = ({
         }}
         className="flex items-start gap-4 bg-white p-4 rounded-xl hover:cursor-pointer shadow-sm relative"
       >
-        <motion.div
-          className="absolute inset-y-0 left-0 w-16 flex items-center justify-center text-red-500 opacity-0"
-          style={{ opacity: useTransform(x, [-100, -50, 0], [1, 0.5, 0]) }}
-        >
+        <motion.div className="absolute inset-y-0 left-0 w-16 flex items-center justify-center text-red-500 opacity-0">
           <Trash2 size={20} />
         </motion.div>
-        <motion.div
-          className="absolute inset-y-0 right-0 w-16 flex items-center justify-center text-red-500 opacity-0"
-          style={{ opacity: useTransform(x, [0, 50, 100], [0, 0.5, 1]) }}
-        >
+        <motion.div className="absolute inset-y-0 right-0 w-16 flex items-center justify-center text-red-500 opacity-0">
           <Trash2 size={20} />
         </motion.div>
         <motion.div
@@ -124,7 +133,7 @@ export const TodoItem = ({
             </div>
           </motion.div>
 
-          <div className="flex items-center gap-1 ml-4 flex-shrink-0">
+          <div className="flex items-center gap-1 ml-4 flex-shrink-0 relative z-10">
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
@@ -136,7 +145,10 @@ export const TodoItem = ({
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => onDelete(todo.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(todo.id);
+              }}
               className="p-2 text-gray-500 hover:text-red-500 rounded-full hover:bg-red-50 transition-colors flex items-center justify-center"
             >
               <Trash2 size={16} className="flex-shrink-0" />
