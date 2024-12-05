@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, X, Save } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -10,6 +10,24 @@ export const AddTodo = ({ onAdd }: AddTodoProps) => {
   const [text, setText] = useState("");
   const [description, setDescription] = useState("");
   const [isAdding, setIsAdding] = useState(false);
+
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (
+        e.key.toLowerCase() === "a" &&
+        !isAdding &&
+        !e.ctrlKey &&
+        !e.altKey &&
+        document.activeElement?.tagName !== "INPUT" &&
+        document.activeElement?.tagName !== "TEXTAREA"
+      ) {
+        setIsAdding(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [isAdding]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,15 +44,19 @@ export const AddTodo = ({ onAdd }: AddTodoProps) => {
       <motion.button
         onClick={() => setIsAdding(true)}
         whileHover={{
-          scale: 1.1,
-          boxShadow: "0 8px 20px rgba(0,0,0,0.2)",
+          scale: 1.15,
+          boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
         }}
         whileTap={{ scale: 0.9 }}
-        initial={{ scale: 0, rotate: -180 }}
+        initial={{
+          scale: 0,
+          rotate: -180,
+          boxShadow: "0 8px 20px rgba(0,0,0,0.3)",
+        }}
         animate={{ scale: 1, rotate: 0 }}
         exit={{ scale: 0, rotate: 180 }}
         transition={{ type: "spring", stiffness: 500, damping: 30 }}
-        className="fixed bottom-8 right-8 w-14 h-14 bg-blue-500 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-600 transition-colors"
+        className="fixed bottom-8 left-1/2 size-14 rounded-full flex items-center justify-center transition-colors"
       >
         <Plus className="w-6 h-6" />
       </motion.button>
