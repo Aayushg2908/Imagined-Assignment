@@ -18,7 +18,7 @@ export const Calendar = ({ selectedDate, onDateSelect }: CalendarProps) => {
   };
 
   return (
-    <div className="flex flex-col items-center mb-6">
+    <div className="flex flex-col items-center mb-4">
       <div className="flex items-center justify-between w-full max-w-sm mb-4">
         {weekDays.map((date, index) => {
           const isSelected = isSameDay(date, selectedDate);

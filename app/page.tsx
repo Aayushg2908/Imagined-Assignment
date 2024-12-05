@@ -46,11 +46,7 @@ export default function Home() {
             />
           </motion.div>
 
-          <motion.div
-            layout
-            className="mb-8 text-center"
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-          >
+          <motion.div layout className="mb-6 text-center">
             <AnimatePresence mode="wait">
               <motion.div
                 key={format(selectedDate, "MMMM-d")}
@@ -79,6 +75,32 @@ export default function Home() {
             </AnimatePresence>
           </motion.div>
         </motion.div>
+
+        <div className="relative m-4 flex justify-center items-center">
+          <motion.div className="relative cursor-pointer" whileHover="hover">
+            <div className="p-[2px] rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
+              <div className="px-4 py-1 bg-white rounded-full">
+                <span className="text-sm font-medium bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
+                  Extra features
+                </span>
+              </div>
+            </div>
+
+            <motion.div
+              className="absolute left-full top-0 ml-2 p-2 bg-white rounded-lg shadow-lg"
+              initial={{ opacity: 0, y: -13 }}
+              variants={{
+                hover: { opacity: 1, y: -10 },
+              }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="text-sm text-gray-600 whitespace-nowrap">
+                <p className="mb-1">1. You can Swipe to delete a todo</p>
+                <p className="mb-1">2. Press A to open the Add Todo Modal</p>
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
 
         <motion.div layout className="px-4 max-w-2xl mx-auto">
           <AnimatePresence mode="wait">
