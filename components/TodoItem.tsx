@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useTransform } from "framer-motion";
 import { Pencil, Trash2, Check } from "lucide-react";
 import { Todo } from "@/store/todoStore";
 import { useState } from "react";
@@ -22,11 +22,33 @@ export const TodoItem = ({
   onEditDescription,
 }: TodoItemProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const x = useMotionValue(0);
+  const opacity = useTransform(x, [-100, 0, 100], [0.3, 1, 0.3]);
+  const background = useTransform(
+    x,
+    [-100, 0, 100],
+    [
+      "rgba(239, 68, 68, 0.1)",
+      "rgba(255, 255, 255, 1)",
+      "rgba(239, 68, 68, 0.1)",
+    ]
+  );
+
+  const handleDragEnd = (event: any, info: any) => {
+    if (Math.abs(info.offset.x) > 100) {
+      onDelete(todo.id);
+    }
+  };
 
   return (
     <>
       <motion.div
         layout
+        style={{ x, background }}
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.7}
+        onDragEnd={handleDragEnd}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }}
@@ -35,34 +57,49 @@ export const TodoItem = ({
           boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
           transition: { duration: 0.2 },
         }}
-        className="flex items-start gap-4 bg-white p-4 rounded-xl hover:cursor-pointer shadow-sm"
+        className="flex items-start gap-4 bg-white p-4 rounded-xl hover:cursor-pointer shadow-sm relative"
       >
-        <motion.button
-          whileTap={{ scale: 0.9 }}
-          whileHover={{ scale: 1.1 }}
-          onClick={() => onToggle(todo.id)}
-          className="relative w-5 h-5 border-2 rounded-full border-gray-300 hover:border-black transition-colors group mt-0.5"
-        >
-          {todo.completed && (
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
-              transition={{ type: "spring", stiffness: 500, damping: 30 }}
-              className="absolute inset-0 flex items-center justify-center bg-black rounded-full"
-            >
-              <Check size={14} className="text-white" />
-            </motion.div>
-          )}
-        </motion.button>
-
         <motion.div
-          className="flex-1 min-w-0"
-          animate={{ opacity: todo.completed ? 0.6 : 1 }}
-          transition={{ duration: 0.2 }}
+          className="absolute inset-y-0 left-0 w-16 flex items-center justify-center text-red-500 opacity-0"
+          style={{ opacity: useTransform(x, [-100, -50, 0], [1, 0.5, 0]) }}
         >
-          <div className="flex items-center justify-between">
-            <div className="min-w-0 flex-1">
+          <Trash2 size={20} />
+        </motion.div>
+        <motion.div
+          className="absolute inset-y-0 right-0 w-16 flex items-center justify-center text-red-500 opacity-0"
+          style={{ opacity: useTransform(x, [0, 50, 100], [0, 0.5, 1]) }}
+        >
+          <Trash2 size={20} />
+        </motion.div>
+        <motion.div
+          className="flex items-start gap-4 w-full"
+          style={{ opacity }}
+        >
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.1 }}
+            onClick={() => onToggle(todo.id)}
+            className="relative w-5 h-5 border-2 rounded-full border-gray-300 hover:border-black transition-colors group mt-0.5"
+          >
+            {todo.completed && (
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0 }}
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                className="absolute inset-0 flex items-center justify-center bg-black rounded-full"
+              >
+                <Check size={14} className="text-white" />
+              </motion.div>
+            )}
+          </motion.button>
+
+          <motion.div
+            className="flex-1 min-w-0"
+            animate={{ opacity: todo.completed ? 0.6 : 1 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="min-w-0">
               <h3
                 className={`font-medium truncate ${
                   todo.completed ? "line-through text-gray-400" : ""
@@ -82,24 +119,25 @@ export const TodoItem = ({
                 </p>
               )}
             </div>
-            <div className="flex gap-2 ml-4 flex-shrink-0">
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setIsEditModalOpen(true)}
-                className="p-2 text-gray-500 hover:text-black rounded-full hover:bg-gray-100 transition-colors"
-              >
-                <Pencil size={16} />
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => onDelete(todo.id)}
-                className="p-2 text-gray-500 hover:text-red-500 rounded-full hover:bg-red-50 transition-colors"
-              >
-                <Trash2 size={16} />
-              </motion.button>
-            </div>
+          </motion.div>
+
+          <div className="flex items-center gap-1 ml-4 flex-shrink-0">
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setIsEditModalOpen(true)}
+              className="p-2 text-gray-500 hover:text-black rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center"
+            >
+              <Pencil size={16} className="flex-shrink-0" />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onDelete(todo.id)}
+              className="p-2 text-gray-500 hover:text-red-500 rounded-full hover:bg-red-50 transition-colors flex items-center justify-center"
+            >
+              <Trash2 size={16} className="flex-shrink-0" />
+            </motion.button>
           </div>
         </motion.div>
       </motion.div>
